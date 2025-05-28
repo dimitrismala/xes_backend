@@ -310,15 +310,9 @@ exports.getEventsByTimestampRange = async (req, res) => {
             attributes: ["value"],
           },
           where: {
-            [Op.or]: [
-              {
-                attr_key: "time:timestamp",
-                "$attributes->event_has_attribute.value$": {
-                  [Op.between]: [from, to],
-                },
-              },
-              { attr_key: "concept:name" },
-            ],
+            attr_key: {
+              [Op.in]: ["time:timestamp", "concept:name"],
+            },
           },
           attributes: ["attr_key"],
           required: true,

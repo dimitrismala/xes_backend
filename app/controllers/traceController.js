@@ -474,8 +474,8 @@ exports.getTraceWithAttributes = async (req, res) => {
   }
 };
 
-// Επιστρέφει τα traces που το time:timestamps τους βρίσκεται εντός ενός εύρους ημερομηνιών
-// http://localhost:8080/api/traces/timeRange?from=2015-01&to=2015-07&logId=431a7333-ac03-421a-81b0-c599f7dc86dc
+// Επιστρέφει τα traces ενός log που το time:timestamps τους βρίσκεται εντός ενός εύρους ημερομηνιών
+// http://localhost:8080/api/traces/timeRange?from=2017-05-17&to=2025-05-14&logId=431a7333-ac03-421a-81b0-c599f7dc86dc
 exports.getTracesByTimestampRange = async (req, res) => {
   const { from, to, logId } = req.query;
 
@@ -504,24 +504,12 @@ exports.getTracesByTimestampRange = async (req, res) => {
             attributes: ["value"],
           },
           where: {
-            [Op.or]: [
-              {
-                attr_key: "time:timestamp",
-                "$attributes->trace_has_attribute.value$": {
-                  [Op.between]: [from, to],
-                },
-                //   },
-                //   { attr_key: "concept:name" },
-                //  ],
-              },
-              { attr_key: "concept:name" },
-            ],
+            attr_key: {
+              [Op.in]: ["time:timestamp", "concept:name"],
+            },
           },
-          // where: {
-          //   attr_key: "concept:name",
-          // },
           attributes: ["attr_key"],
-          //required: true,
+          required: true,
         },
         {
           model: Log,
